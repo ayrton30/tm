@@ -6,7 +6,7 @@ import math
 import cython
 
 
-def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0.8):
+def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0.8, overlap_thresh=0.3):
     """
 
     :param image:
@@ -17,6 +17,7 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
     :param t1:
     :param t2:
     :param threshold:
+    :param overlap_thresh:
     :return:
     """
 
@@ -85,7 +86,6 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
             cis_corr[y][x] = np.amax(results)
             # indice de la escala que hace maxima la corr
             cis_ps[y][x] = np.unravel_index(np.argmax(results, axis=None), results.shape)[0]
-
     # img resultado del primer filtro 'Cifi'
     cifi_img = np.zeros((img_y, img_x))
     cifi_img = cv2.normalize(cis_corr, cifi_img, 0, 255, cv2.NORM_MINMAX)
@@ -165,7 +165,7 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
 
         ras_corr[y][x] = np.amax(results)
         # indice del angulo que hace maxima la corr
-        ras_ang[y][x] = np.unravel_index(np.argmax(results, axis=None), results.shape)[0] #
+        ras_ang[y][x] = np.unravel_index(np.argmax(results, axis=None), results.shape)[0]  #
     print("Calculo de ras_corr[y][x]")
 
     # img resultado del segundo filtro 'Rafi'
@@ -188,12 +188,13 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
     final_pixelX = []
     final_pixelY = []
 
+    # escalar el delta al si(scale_i) de mejor coincidencia
     delta_x = round(tmp_x / 2)  # para que no ocurra-> template > imagen (cropped)
     delta_y = round(tmp_y / 2)
 
     for (x, y) in zip(second_pixels_x, second_pixels_y):
-        ang = ras_ang[y][x]
-        sca = cis_ps[y][x]
+        ang = angles[ras_ang[y][x]]
+        sca = scales[cis_ps[y][x]]
 
         M = cv2.getRotationMatrix2D((x, y), ang, sca)
         affine = cv2.warpAffine(img.copy(), M, (img_x, img_y))
@@ -206,19 +207,24 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
 
         cropped = affine[a:(a + tmp_y), b:(b + tmp_x)]
         res = cv2.matchTemplate(cropped, tmp, cv2.TM_CCORR_NORMED)
-
+        print("res:", np.mean(res))
         if np.mean(res) > threshold:
+            print("res:", np.mean(res))
             final_pixelX.append(x)
             final_pixelY.append(y)
 
 # procesamiento de resultado, eleccion del mejor rectangulo
     boxes = []
     for (x, y) in zip(final_pixelX, final_pixelY):
-        top_left = x - delta_x, y - delta_y
-        bottom_right = (x + delta_x, y + delta_x)
+        sca = scales[cis_ps[y][x]]
+        delta_x_scale = round(delta_x * sca)    # cambio de escala para el recorte del template
+        delta_y_scale = round(delta_y * sca)
+
+        top_left = (x - delta_x_scale, y - delta_y_scale)
+        bottom_right = (x + delta_x_scale, y + delta_y_scale)
         boxes.append([top_left[0], top_left[1], bottom_right[0], bottom_right[1]])
     boxes = np.asarray(boxes)
-    pick = nms.non_max_suppression_slow(boxes, 0.4)
+    pick = nms.non_max_suppression(boxes, overlap_thresh)
 
     img_color = cv2.imread(image, cv2.IMREAD_COLOR)
     for (startX, startY, endX, endY) in pick:
