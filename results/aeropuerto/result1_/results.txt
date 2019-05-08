@@ -1,0 +1,5 @@
+Numero de templates: 1 verdadero, y 3 posibles match de otros aviones
+Falsos positivos: 0
+Falsos negativos: 0
+
+1/1 considerando 1/( 1 + 3(posibles matching?))

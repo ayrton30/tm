@@ -1,0 +1,5 @@
+Numero de templates: 2
+Falsos positivos: 4
+Falsos negativos: 2
+
+0/2

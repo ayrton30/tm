@@ -1,0 +1,5 @@
+Numero de templates: 96 templates, sin rotamiento ni cambio de escalamiento
+Falsos positivos: 0
+Falsos negativos: 3
+
+93/96

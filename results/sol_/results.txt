@@ -1,0 +1,5 @@
+Numero de templates: 17, sin rotar ni cambio de escala!
+Falsos positivos: 13 !!!!!
+Falsos negativos: 1
+
+16/17

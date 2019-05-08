@@ -1,0 +1,5 @@
+Numero de templates: 2
+Falsos positivos: 1
+Falsos negativos: 1
+
+1/2 (ese 1 mal centrado con el template)

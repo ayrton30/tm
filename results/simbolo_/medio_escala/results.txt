@@ -1,0 +1,5 @@
+Numero de templates: 9 en diferentes escalas.
+Falsos positivos: 0
+Falsos negativos: 3
+
+6/9

@@ -3,7 +3,7 @@ import numpy as np
 import nms
 from scipy.signal import convolve2d
 import math
-import cython
+from tqdm import tqdm
 
 
 def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0.8, overlap_thresh=0.3):
@@ -117,6 +117,7 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
         kernel_rq.fill(0)
     print("Calculo de RT")
 
+# LENTO!!!!
 # Calculo de RA, the length of the radial lines is calculated according to the largest circle radius and the
 # probable scale si computed by Cifi
     kernel_ra = np.zeros((img_y, img_x), np.float32)
@@ -129,16 +130,14 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
         sin.append(math.sin(angle * math.pi / 180.0))
 
     # manipulando la imagen A
-    for angle in angles:
-        for (x1, y1) in zip(first_pixels_x, first_pixels_y):
-            index_ps = cis_ps[y1][x1]   #ps = possible scale
+    for angle in tqdm(angles):  # progress bar
+        for (x1, y1) in tqdm(zip(first_pixels_x, first_pixels_y)):
+            index_ps = cis_ps[y1][x1]   # ps = possible scale
             length_ = scales[index_ps] * length
 
             # theta = angle * math.pi / 180.0
             x2 = round(x1 + length_ * cos[angles.index(angle)])
-            # x2 = round(x1 + length_ * math.cos(angle * math.pi / 180.0))
             y2 = round(y1 + length_ * sin[angles.index(angle)])
-            # y2 = round(y1 + length_ * math.sin(angle * math.pi / 180.0))
 
             cv2.line(kernel_ra, (x1, y1), (int(x2), int(y2)), 1, 1)
             multi = np.multiply(img, kernel_ra)
@@ -146,7 +145,6 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
 
             ra[y1][x1][angles.index(angle)] = value
             kernel_ra.fill(0)
-    print("Calculo de RA")
 
 # calculo radial sampling correlation RasCorr
     ras_corr = np.zeros((img_y, img_x), np.float)   # radial sampling correlation RasCorr at the best matching angle
@@ -164,7 +162,7 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
         results = np.asarray(results)
 
         ras_corr[y][x] = np.amax(results)
-        # indice del angulo que hace maxima la corr
+        # indice del angulo que hace maxima la correlacion
         ras_ang[y][x] = np.unravel_index(np.argmax(results, axis=None), results.shape)[0]  #
     print("Calculo de ras_corr[y][x]")
 

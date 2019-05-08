@@ -1,0 +1,5 @@
+Numero de templates: 5 (posibles match con |avion|), 1 rotado
+Falsos positivos: 2
+Falsos negativos: 3
+
+2/5 (mal centrado el rectangulo de matching)

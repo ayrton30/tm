@@ -1,0 +1,5 @@
+Numero de templates: 7, 3 de ellos estan rotados.
+Falsos positivos: 0
+Falsos negativos: 0
+
+7/7

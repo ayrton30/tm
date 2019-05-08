@@ -1,0 +1,5 @@
+Numero de templates: 17, todos rotados en algun angulo multiplo de 10°
+Falsos positivos: 1
+Falsos negativos: 3
+
+14/17 con errores de centrado en el template!

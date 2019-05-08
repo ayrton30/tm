@@ -1,0 +1,9 @@
+from ciratefi import ciratefi
+
+radii = [0, 1, 3, 5]
+scales = [0.6, 0.7, 0.8, 0.9, 1, 1.1]
+angles = range(0, 360, 10)
+
+
+ciratefi("test2.png", "tem.png", radii, scales, angles,
+         t1=241, t2=241, threshold=0.88, overlap_thresh=0.1)

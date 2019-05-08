@@ -1,0 +1,25 @@
+from ciratefi import ciratefi
+
+radii = [0, 1, 3, 5]
+scales = [0.6, 0.7, 0.8, 0.9, 1, 1.1]
+angles = range(0, 360, 5)
+
+ciratefi("img1.png", "tmp.png", radii, scales, angles, t1=235, t2=235, threshold=0.8)
+
+La cantidad de pixeles de primer grado son= 10647
+La cantidad de pixeles de segundo grado son= 12
+
+res: 0.55701697
+res: 0.5427567
+res: 0.6859916
+res: 0.7627469
+res: 0.79231346
+res: 0.87941444
+res: 0.87941444
+res: 0.8206514
+res: 0.8206514
+res: 0.6787759
+res: 0.7154978
+res: 0.75903296
+res: 0.7026258
+res: 0.7755163

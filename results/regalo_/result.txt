@@ -1,0 +1,5 @@
+Numero de templates: 12, de los cuales 4 se encuentran rotados y 2 reducidos en escala
+Falsos positivos: 3
+Falsos negativos: 6
+
+6/12

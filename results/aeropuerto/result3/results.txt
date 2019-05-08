@@ -1,0 +1,4 @@
+Numero de templates: 8 (algunos mas parecidos que otros |avion|)
+Falsos positivos: 16
+Falsos negativos: 3
+
