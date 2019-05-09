@@ -20,7 +20,7 @@ El ultimo paso es el filtro **Tefi** o 'Template Matching Filter' que hace un te
 
 
 
-## Algunos ejemplos de pruebas:
+## Pruebas realizadas:
 
 ### Ejemplo 1:
 ![](results/sombrero_rotado_/test.png)
