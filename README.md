@@ -37,10 +37,14 @@ El ultimo paso es el filtro **Tefi** o 'Template Matching Filter' que hace un te
 
 ![](results/flor_/template.png)
 
-![](results/flor_/final.jpg)
+![](results/flor_/cv2_result.png)
 
 - Falsos positivos: 2
 - Falsos negativos: 7
+
+Y utilizando cv2.matchTemplate() se obtiene:
+
+![](results/flor_/cv2_res.png)
 
 ### Ejemplo 3:
 ![](results/total_/total.png)
