@@ -6,19 +6,21 @@ import math
 from tqdm import tqdm
 
 
-def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0.8, overlap_thresh=0.3):
+def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, t3=0.8, overlap_thresh=0.3):
     """
+    finding a query template grayscale image 'template' in another grayscale image to analyze 'image', invariant to
+    rotation, scale, translation, brightness and contrast
 
-    :param image:
-    :param template:
-    :param radii:
-    :param scales:
-    :param angles:
-    :param t1:
-    :param t2:
-    :param threshold:
-    :param overlap_thresh:
-    :return:
+    :param image: path of the image to analyze
+    :param template: path of the query template
+    :param radii: set of radii
+    :param scales: set of scales which the template is resize
+    :param angles: set of rotation angles [°]
+    :param t1: threshold for the first step Cifi,   range[0-255]
+    :param t2: threshold for the second step Rafi,  range[0-255]
+    :param t3: threshold for the third step Tefi,   range[0-1]
+    :param overlap_thresh: for Non-Maximum Suppression algorithm
+    :return: final pixel(s)
     """
 
     img = cv2.imread(image, 0)  # gray-scale image
@@ -115,7 +117,6 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
 
         rt[angles.index(angle)] = value
         kernel_rq.fill(0)
-    print("Calculo de RT")
 
 # LENTO!!!!
 # Calculo de RA, the length of the radial lines is calculated according to the largest circle radius and the
@@ -130,8 +131,8 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
         sin.append(math.sin(angle * math.pi / 180.0))
 
     # manipulando la imagen A
-    for angle in tqdm(angles):  # progress bar
-        for (x1, y1) in tqdm(zip(first_pixels_x, first_pixels_y)):
+    for (x1, y1) in tqdm(zip(first_pixels_x, first_pixels_y), total=len(first_pixels_x)):
+        for angle in (angles):  # progress bar
             index_ps = cis_ps[y1][x1]   # ps = possible scale
             length_ = scales[index_ps] * length
 
@@ -164,7 +165,6 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
         ras_corr[y][x] = np.amax(results)
         # indice del angulo que hace maxima la correlacion
         ras_ang[y][x] = np.unravel_index(np.argmax(results, axis=None), results.shape)[0]  #
-    print("Calculo de ras_corr[y][x]")
 
     # img resultado del segundo filtro 'Rafi'
     rafi_img = np.zeros((img_y, img_x))
@@ -205,9 +205,8 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
 
         cropped = affine[a:(a + tmp_y), b:(b + tmp_x)]
         res = cv2.matchTemplate(cropped, tmp, cv2.TM_CCORR_NORMED)
-        print("res:", np.mean(res))
-        if np.mean(res) > threshold:
-            print("res:", np.mean(res))
+        # print("res:", np.mean(res))
+        if np.mean(res) > t3:
             final_pixelX.append(x)
             final_pixelY.append(y)
 
@@ -223,8 +222,11 @@ def ciratefi(image, template, radii, scales, angles, t1=245, t2=245, threshold=0
         boxes.append([top_left[0], top_left[1], bottom_right[0], bottom_right[1]])
     boxes = np.asarray(boxes)
     pick = nms.non_max_suppression(boxes, overlap_thresh)
+    print("La cantidad de pixeles finales son=", len(pick))
 
     img_color = cv2.imread(image, cv2.IMREAD_COLOR)
     for (startX, startY, endX, endY) in pick:
         cv2.rectangle(img_color, (startX, startY), (endX, endY), (120, 200, 100), 1)
     cv2.imwrite('final.jpg', img_color)
+
+    return pick
