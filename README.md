@@ -1,5 +1,7 @@
 # Template Matching
 
+Implementacion en python del algoritmo Ciratefi, [trabajo de Hae Yong Kim y Sidnei Alves de Araújo.](https://link.springer.com/content/pdf/10.1007%2F978-3-540-77129-6_13.pdf)
+
 Template-Matching en escala de grises invariente a la rotación, escala, traslación, brillo y contraste. El algoritmo se basa en tres pasos de filtrados sucesivos en el que se excluyen los pixeles que no tienen oportunidad de matchear con el template. 
 
 El primer paso es el filtro **Cifi** o 'Circular Sampling Filter' que usa las proyecciones de la imagen y el template en un conjunto de circulos para detectar los "pixeles" de primer grado. Para cada pixel candidato, tambien se calcula el factor de posible escala.
